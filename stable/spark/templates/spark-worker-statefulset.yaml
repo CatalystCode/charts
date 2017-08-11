@@ -27,6 +27,11 @@ spec:
           image: "{{.Values.Worker.Image}}:{{.Values.Worker.ImageTag}}"
           imagePullPolicy: "{{.Values.Worker.ImagePullPolicy}}"
           command: ["/start-worker"]
+          {{- if .Values.Worker.ConfigMapName }}
+          envFrom:
+          - configMapRef:
+              name: "{{.Values.Worker.ConfigMapName}}"
+          {{ else }}
       #    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://{{ template "master-fullname" . }}:{{.Values.Master.ServicePort}}", "--webui-port", "{{.Values.Worker.ContainerPort}}", "--work-dir", "{{.Values.Worker.WorkingDirectory}}"]
           ports:
             - containerPort: {{.Values.Worker.ContainerPort}}

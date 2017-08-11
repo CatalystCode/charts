@@ -41,6 +41,7 @@ Worker:
   Component: "spark-worker"
   WorkingDirectory: "/opt/spark/work"
   ContainerPort: 8081
+  #ConfigMapName: spark-master-conf
   Resources:
     Requests:
       Cpu: "700m"

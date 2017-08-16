@@ -6,7 +6,7 @@
 Master:
   Name: master
   Image: "erikschlegel/spark-master"
-  ImageTag: "2.2.0"
+  ImageTag: "2.2"
   Component: "spark-master"
   ImagePullPolicy: "Always"
   ServicePort: 7077
@@ -69,4 +69,5 @@ Persistence:
   # PvcPwd: Secret
   Volumes:
   CheckpointDirectory: "/mnt/checkpoint"
+  CheckpointShare: "checkpoint"
   Mounts:

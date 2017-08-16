@@ -31,7 +31,7 @@ spec:
           envFrom:
           - configMapRef:
               name: "{{.Values.Worker.ConfigMapName}}"
-          {{ else }}
+          {{ end }}
       #    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://{{ template "master-fullname" . }}:{{.Values.Master.ServicePort}}", "--webui-port", "{{.Values.Worker.ContainerPort}}", "--work-dir", "{{.Values.Worker.WorkingDirectory}}"]
           ports:
             - containerPort: {{.Values.Worker.ContainerPort}}
@@ -52,31 +52,16 @@ spec:
             {{- end -}}
       {{- if .Values.Persistence.Enabled }}
           volumeMounts:
-            {{- if .Values.Persistence.Mounts }}
-            {{ toYaml .Values.Persistence.Mounts | indent 12 }}
-            {{- end }}
-            - name: spark-work
-              mountPath: "{{.Values.Worker.WorkingDirectory}}"
+            - name: checkpointfile
+              mountPath: {{ .Values.Persistence.CheckpointDirectory | quote }}
       {{- end -}}
   # These are converted to volume claims by the controller
   # and mounted at the paths mentioned above.
-  volumeClaimTemplates:
-  {{- if .Values.Persistence.Enabled }}
-  - metadata:
-    {{- if .Values.Persistence.Volumes }}
-    {{ toYaml .Values.Persistence.Volumes | indent 6 }}
+    {{- if .Values.Persistence.Enabled }}
+      volumes:
+      - name: checkpointfile
+        azureFile:
+          secretName: checkpointing-pvc-secret
+          shareName: {{ .Values.Persistence.CheckpointShare | quote }}
+          readOnly: false
     {{- end }}
-      name: spark-work
-      annotations:
-        {{- if .Values.Persistence.StorageClass }}
-        volume.beta.kubernetes.io/storage-class: {{ .Values.Persistence.StorageClass }}
-        {{- else }}
-        volume.alpha.kubernetes.io/storage-class: fast
-        {{- end }}
-    spec:
-      accessModes: 
-      - {{ .Values.Persistence.AccessMode | quote }}
-      resources:
-        requests:
-          storage: {{ .Values.Persistence.Size | quote }}
- {{- end }}

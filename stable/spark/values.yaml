@@ -11,7 +11,6 @@ Master:
   ImagePullPolicy: "Always"
   ServicePort: 7077
   ContainerPort: 7077
-  EnableHA: false
   #SparkSubmitCommand: ["spark-submit", "--master local[2]", "--driver-memory 4g", "enter-your-fat.jar"]
   #ConfigMapName: spark-master-conf
   Resources:
@@ -64,25 +63,10 @@ Zeppelin:
   ServicePort: 8080
   ContainerPort: 8080
 
-Zookeeper: 
-  Replicas: 3
-
 Persistence:
   Enabled: true
-  ## If defined, volume.beta.kubernetes.io/storage-class: <StorageClass>
-  ## Default: volume.alpha.kubernetes.io/storage-class: default
-  ##
-  # StorageClass:
-  AccessMode: ReadWriteOnce
-  StorageClass: fast
-  Size: 128Gi
-  Sku: Premium_LRS
-  Provisioner: kubernetes.io/azure-disk
-  Location: eastus
+  # PvcAcctName: Secret
+  # PvcPwd: Secret
   Volumes:
-#  - name: nothing
-#    emptyDir: {}
+  CheckpointDirectory: "/mnt/checkpoint"
   Mounts:
-#  - mountPath: /var/nothing
-#    name: nothing
-#    readOnly: true

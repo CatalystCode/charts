@@ -58,11 +58,17 @@ spec:
             limits:
               cpu: "{{.Values.Worker.Resources.Limits.Cpu}}"
               memory: "{{.Values.Worker.Resources.Limits.Memory}}"
+         {{- if .Values.Persistence.CheckpointShare }}
           volumeMounts:
             - name: worker-data
               mountPath: {{ .Values.Worker.WorkingDirectory | quote }}
             - name: checkpointfile
               mountPath: {{ .Values.Persistence.CheckpointDirectory | quote }}
+         {{ else }}
+          volumeMounts:
+            - name: worker-data
+              mountPath: {{ .Values.Worker.WorkingDirectory | quote }}
+         {{- end }}
           env:
 {{- if .Values.Worker.Environment }}
 {{ toYaml .Values.Worker.Environment | indent 12 }}

@@ -11,7 +11,7 @@ Inspired from Helm Classic chart https://github.com/helm/charts
 This chart will do the following:
 
 * 1 x Spark Master with port 8080 exposed on an external LoadBalancer
-* 3 x Spark Workers with StatefuleSets to scale to max 10 pods when CPU hits 50% of 100m
+* 3 x Spark Workers with StatefulSets to scale to max 10 pods when CPU hits 50% of 100m
 * 1 x Zeppelin with port 8080 exposed on an external LoadBalancer
 * All using Kubernetes Deployments
 * Worker directory storage takes place on local SSD for each worker pod

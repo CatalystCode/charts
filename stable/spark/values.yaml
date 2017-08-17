@@ -68,4 +68,4 @@ Persistence:
   # PvcAcctName: Secret
   # PvcPwd: Secret
   CheckpointDirectory: "/mnt/checkpoint"
-  CheckpointShare: "checkpoint"
+  #CheckpointShare: "checkpoint"

@@ -34,8 +34,9 @@ WebUi:
 Worker:
   Name: worker
   Image: "erikschlegel/spark-worker"
-  ImageTag: "2.2.0"
+  ImageTag: "2.2"
   ImagePullPolicy: "Always"
+  VmInstanceType: "Standard_L4s"
   Replicas: 6
   Component: "spark-worker"
   WorkingDirectory: "/opt/spark/work"
@@ -64,10 +65,7 @@ Zeppelin:
   ContainerPort: 8080
 
 Persistence:
-  Enabled: true
   # PvcAcctName: Secret
   # PvcPwd: Secret
-  Volumes:
   CheckpointDirectory: "/mnt/checkpoint"
   CheckpointShare: "checkpoint"
-  Mounts:

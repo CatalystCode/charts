@@ -22,6 +22,22 @@ spec:
         chart: "{{.Chart.Name}}-{{.Chart.Version}}"
         component: "{{.Release.Name}}-{{.Values.Worker.Component}}"
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "beta.kubernetes.io/instance-type"
+                  operator: In
+                  values: ["{{.Values.Worker.VmInstanceType}}"]
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values: [{{ template "worker-fullname" . }}]
+            topologyKey: kubernetes.io/hostname
       containers:
         - name: {{ template "worker-fullname" . }}
           image: "{{.Values.Worker.Image}}:{{.Values.Worker.ImageTag}}"
@@ -42,6 +58,11 @@ spec:
             limits:
               cpu: "{{.Values.Worker.Resources.Limits.Cpu}}"
               memory: "{{.Values.Worker.Resources.Limits.Memory}}"
+          volumeMounts:
+            - name: worker-data
+              mountPath: {{ .Values.Worker.WorkingDirectory | quote }}
+            - name: checkpointfile
+              mountPath: {{ .Values.Persistence.CheckpointDirectory | quote }}
           env:
 {{- if .Values.Worker.Environment }}
 {{ toYaml .Values.Worker.Environment | indent 12 }}
@@ -50,18 +71,16 @@ spec:
             - name: SPARK_WORKER_DIR
               value: {{ .Values.Worker.WorkingDirectory | quote }}
             {{- end -}}
-      {{- if .Values.Persistence.Enabled }}
-          volumeMounts:
-            - name: checkpointfile
-              mountPath: {{ .Values.Persistence.CheckpointDirectory | quote }}
-      {{- end -}}
   # These are converted to volume claims by the controller
   # and mounted at the paths mentioned above.
-    {{- if .Values.Persistence.Enabled }}
       volumes:
+      - name: worker-data
+        hostPath:
+            path: "/mnt/workdir"
+      {{- if .Values.Persistence.CheckpointShare }}
       - name: checkpointfile
         azureFile:
           secretName: checkpointing-pvc-secret
           shareName: {{ .Values.Persistence.CheckpointShare | quote }}
           readOnly: false
-    {{- end }}
+      {{- end }}

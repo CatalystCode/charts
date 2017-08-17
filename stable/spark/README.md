@@ -11,9 +11,11 @@ Inspired from Helm Classic chart https://github.com/helm/charts
 This chart will do the following:
 
 * 1 x Spark Master with port 8080 exposed on an external LoadBalancer
-* 3 x Spark Workers with HorizontalPodAutoscaler to scale to max 10 pods when CPU hits 50% of 100m
+* 3 x Spark Workers with StatefuleSets to scale to max 10 pods when CPU hits 50% of 100m
 * 1 x Zeppelin with port 8080 exposed on an external LoadBalancer
 * All using Kubernetes Deployments
+* Worker directory storage takes place on local SSD for each worker pod
+* Configurable mounted checkpoint directory for spark streaming-based applications
 
 ## Prerequisites
 
@@ -45,7 +47,6 @@ The following tables lists the configurable parameters of the Spark chart and th
 | `Master.ServicePort`    | k8s service port                   | `7077`                                                     |
 | `Master.ContainerPort`  | Container listening port           | `7077`                                                     |
 | `Master.DaemonMemory`   | Master JVM Xms and Xmx option      | `1g`                                                       |
-| `Master.EnableHA`       |Enable HA and a zookeeper cluster   | `true`                                                     |
 | `Master.SparkSubmitCommand` |Specify initial command to run on master node(ie spark-submit)   | `disabled` |
 | `Master.ConfigMapName` |Config Map reference for spark master environment   | `disabled` |
 
@@ -63,11 +64,10 @@ The following tables lists the configurable parameters of the Spark chart and th
 
 |       Parameter          |           Description            |                         Default                          |
 |--------------------------|----------------------------------|----------------------------------------------------------|
-| `Persistence.Enabled`    | Enable Persistence               | `true`                                                   |
-| `Persistence.AccessMode` | Persistence Access mode          | `ReadWriteOnce`                                          |
-| `Persistence.Size`       | Persistence size                 | `8Gi`                                                    |
-| `Persistence.volumes`    | Additional volumes to persist    | `undefined`                                              |
-| `Persistence.mounts`     | Additional mounts                | `undefined`                                              |
+| `PvcAcctName`    | The storage account name secret used for managed disk                 | `undefined` |
+| `PvcPwd`    | The storage account password secret used for managed disk                 | `undefined` |
+| `CheckpointDirectory`    | The checkpoint directory used for spark streaming                 | `undefined` |
+| `CheckpointShare`    | The checkpoint share used spark streaming                | `undefined` |
 
 ### Spark Worker
 
@@ -79,6 +79,7 @@ The following tables lists the configurable parameters of the Spark chart and th
 | `Worker.Replicas`            | k8s hpa and deployment replicas    | `3`                                                        |
 | `Worker.ReplicasMax`         | k8s hpa max replicas               | `10`                                                       |
 | `Worker.Component`           | k8s selector key                   | `spark-worker`                                             |
+| `Master.ConfigMapName` |Config Map reference for spark worker environment   | `disabled` |
 | `Worker.WorkingDirectory`    | Directory to run applications in   | `SPARK_HOME/work`                                          |
 | `Worker.Cpu`                 | container requested cpu            | `100m`                                                     |
 | `Worker.Memory`              | container requested memory         | `512Mi`                                                    |
@@ -101,11 +102,7 @@ The following tables lists the configurable parameters of the Spark chart and th
 | `Zeppelin.Cpu`          | container requested cpu          | `100m`                                                   |
 | `Zeppelin.ServicePort`  | k8s service port                 | `8080`                                                   |
 | `Zeppelin.ContainerPort`| Container listening port         | `8080`                                                   |
-
-### Zookeeper
-|       Parameter         |           Description            |                         Default                          |
-|-------------------------|----------------------------------|----------------------------------------------------------|
-| `Zookeeper.Replicas`    | The number of zookeeper replicas | `5`                                                      |
+                                            |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 

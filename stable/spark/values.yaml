@@ -67,5 +67,5 @@ Zeppelin:
 Persistence:
   # PvcAcctName: Secret
   # PvcPwd: Secret
-  CheckpointDirectory: "/mnt/checkpoint"
+  CheckpointDirectory: "/opt/checkpoint"
   #CheckpointShare: "checkpoint"

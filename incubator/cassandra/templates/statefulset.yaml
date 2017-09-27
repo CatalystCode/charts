@@ -73,10 +73,6 @@ spec:
             value: "{{ printf "%s-%s" .Release.Name .Values.Name | trunc 24 }}-0.{{ printf "%s-%s" .Release.Name .Values.Name | trunc 24 }}.{{.Release.Namespace}}.svc.cluster.local"
           - name: CASSANDRA_CLUSTER_NAME
             value: "{{.Values.cassandra.ClusterName}}"
-          - name: CASSANDRA_DC
-            value: "{{.Values.cassandra.DC}}"
-          - name: CASSANDRA_RACK
-            value: "{{.Values.cassandra.Rack}}"
           - name: CASSANDRA_AUTO_BOOTSTRAP
             value: "{{.Values.cassandra.AutoBootstrap}}"
           - name: POD_IP

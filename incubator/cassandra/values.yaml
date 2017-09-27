@@ -5,9 +5,9 @@
 
 Name: cassandra
 Component: "cassandra"
-replicaCount: 6
-Image: "erikschlegel/cassandra"
-VmInstanceType: "Standard_L4s"
+replicaCount: 3
+Image: "xtoph/azure-cassandra"
+VmInstanceType: "Standard_DS4_v2"
 ImageTag: "v12"
 ImagePullPolicy: "Always"
 
@@ -18,8 +18,6 @@ cassandra:
   MaxHeapSize: "4000M"
   HeapNewSize: "100M"
   ClusterName: "cassandra"
-  DC: "dc-eastus2-cassandra"
-  Rack: "rack-eastus2-cassandra"
   AutoBootstrap: "false"
 
 # Persistence information

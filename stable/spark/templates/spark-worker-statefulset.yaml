@@ -83,6 +83,9 @@ spec:
       - name: worker-data
         hostPath:
             path: "/mnt/workdir"
+      - name: tmp
+        hostPath:
+            path: "/mnt/tmp"
       {{- if .Values.Persistence.CheckpointShare }}
       - name: checkpointfile
         azureFile:
